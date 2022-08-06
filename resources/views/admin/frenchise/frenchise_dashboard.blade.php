@@ -146,6 +146,7 @@
                                     <div class="panel-heading">Monthly Chart</div>
                                     <div class="panel-body">
                                         <div id="chartContainer-os"></div>
+                                        <a href="{{route('admin-chart-detail',$fid)}}">view details</a>
                                     </div>
                                 </div>
                             </div>

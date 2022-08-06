@@ -431,6 +431,8 @@ Route::prefix('admin')->group(function () {
       Route::get('/order/{id}/show', 'App\Http\Controllers\AdminOrderController@show')->name('admin-frenchise-order-show');
       Route::get('/{id}/customers/list', 'App\Http\Controllers\AdminVendorController@customerlist')->name('admin-frenchise-vendor-customer');
       Route::get('/{id}/vendor/dashboard', 'App\Http\Controllers\AdminVendorController@vendorDashbord')->name('admin-frenchise-vendor-dashboard');
+
+       Route::get('/{id}/chart_detail', 'App\Http\Controllers\AdminController@chart_detail')->name('admin-chart-detail');
     });
 
     // add country and city

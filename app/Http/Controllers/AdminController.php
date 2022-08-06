@@ -796,4 +796,21 @@ class AdminController extends Controller
         }
         return redirect()->route('add-country-city')->withSuccess(['State Saved Successful!']);
     }
+
+
+    public function chart_detail(Request $request,$fid)
+    {
+       $frenchise = Frenchise::where('id', $fid)->first();
+       $vendors = User::all()->where('frenchise_id', $frenchise->id);
+
+         $query  = Frenchise::leftjoin('users','frenchises.id','=','users.frenchise_id')
+        ->leftjoin('user_subscriptions','users.id','=','user_subscriptions.user_id')
+        ->where('frenchise_id',$fid)
+        ->orderBy('user_subscriptions.id','desc')
+        ->get(['users.shop_name','user_subscriptions.created_at','user_subscriptions.price','frenchises.frenchise_name','frenchises.registration_tax','frenchises.sale_tax','other_expenses','monthly_percentage']);
+
+
+         return view('admin.frenchise.chart_detail',compact('query'));
+    }
+
 }
