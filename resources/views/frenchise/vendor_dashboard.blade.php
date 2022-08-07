@@ -1,4 +1,4 @@
-@extends('layouts.frenchise')
+@extends('layouts.admin')
 
 @section('content')
        <div class="right-side">
@@ -10,12 +10,12 @@
                           <div class="panel-heading admin-title">
                                                                 <div class="product__header" style="border-bottom: none;">
                                         <div class="row reorder-xs">
-                                            <div class="col-lg- col-md-5 col-sm-5 col-xs-12">
+                                            <div class="col-lg-6 col-md-5 col-sm-5 col-xs-12">
                                                 <div class="product-header-title">
                                                     <h2 style="font-size: 25px;">Vendor Dashboard </h2>
                                                 </div>
                                             </div>
-                                              @include('includes.frenchise-notification')
+                                              @include('includes.notification')
                                         </div>   
                                     </div>
                             </div>
@@ -27,7 +27,7 @@
                                            
                                         </div>
                                         <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                                            <a href="{{route('frenchise-vendor-prod-index',['id'=>$uid])}}" class="title-stats title-red">
+                                            <a href="{{route('admin-frenchise-vendor-prod-index',['id'=>$uid])}}" class="title-stats title-red">
                                                 <div class="icon"><i class="fa fa-shopping-cart fa-5x"></i></div>
                                                 <div class="number">{{count($products)}}</div>
                                                 <h4>Total Products!</h4>
@@ -127,7 +127,7 @@
                         <div class="row">
                             <div class="col-lg-6 col-md-6 col-sm-6">
                                 <div class="panel panel-default admin top-reference-area">
-                                    <div class="panel-heading">Top Referrals</div>
+                                    <div class="panel-heading">Daily Sale</div>
                                     <div class="panel-body">
                                         <div id="chartContainer-topReference"></div>
                                     </div>
@@ -135,7 +135,7 @@
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6">
                                 <div class="panel panel-default admin top-reference-area">
-                                    <div class="panel-heading">Most Used OS</div>
+                                    <div class="panel-heading">Monthly Sale</div>
                                     <div class="panel-body">
                                         <div id="chartContainer-os"></div>
                                     </div>
@@ -219,13 +219,12 @@
                         showInLegend: true,
                         legendText: "",
                         toolTipContent: "{name}: <strong>{#percent%} (#percent%)</strong>",
-                        indexLabel: "#percent%",
+                        indexLabel: "{y} (#percent%)",
                         indexLabelFontColor: "white",
                         indexLabelPlacement: "inside",
                         dataPoints: [
-                                @foreach($referrals as $browser)
-                                    {y:{{$browser->total_count}}, name: "{{$browser->referral}}"},
-                                @endforeach
+                                    {y:{{$sale_daily}}, name: "Sale"},
+                                    {y:{{$sale_daily/100*$vendor->sale_tax}}, name: "Sale Tax"},
                         ]
                     }
                 ]
@@ -253,13 +252,12 @@
                         showInLegend: true,
                         legendText: "",
                         toolTipContent: "{name}: <strong>{#percent%} (#percent%)</strong>",
-                        indexLabel: "#percent%",
+                        indexLabel: "{y} (#percent%)",
                         indexLabelFontColor: "white",
                         indexLabelPlacement: "inside",
                         dataPoints: [
-                            @foreach($browsers as $browser)
-                                {y:{{$browser->total_count}}, name: "{{$browser->referral}}"},
-                            @endforeach
+                                    {y:{{$sale_monthly}}, name: "Sale"},
+                                    {y:{{$sale_monthly/100*$vendor->sale_tax}}, name: "Sale Tax"},
                         ]
                     }
                 ]
