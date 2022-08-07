@@ -223,7 +223,7 @@
                         indexLabelFontColor: "white",
                         indexLabelPlacement: "inside",
                         dataPoints: [
-                                    {y:{{$sale_daily}}, name: "Sale"},
+                                    {y:{{$sale_daily-$sale_daily/100*$vendor->sale_tax}}, name: "Sale"},
                                     {y:{{$sale_daily/100*$vendor->sale_tax}}, name: "Sale Tax"},
                         ]
                     }
@@ -256,7 +256,7 @@
                         indexLabelFontColor: "white",
                         indexLabelPlacement: "inside",
                         dataPoints: [
-                                    {y:{{$sale_monthly}}, name: "Sale"},
+                                    {y:{{$sale_monthly-$sale_monthly/100*$vendor->sale_tax}}, name: "Sale"},
                                     {y:{{$sale_monthly/100*$vendor->sale_tax}}, name: "Sale Tax"},
                         ]
                     }
