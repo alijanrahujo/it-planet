@@ -89,6 +89,12 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
+                                            <label class="control-label col-sm-4" for="v5">Sale Tax *<span></span></label>
+                                            <div class="col-sm-6">
+                                                <input type="text" class="form-control" name="sale_tax" id="v5" placeholder="Sale Tax" value="{{$user->sale_tax}}" >
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
                                             <label class="control-label col-sm-4" for="v6">Message *<span>(This Field is Optional)</span></label>
                                             <div class="col-sm-6">
                                                 <textarea class="form-control" id="v6" name="shop_message" placeholder="Message" rows="5">{{$user->shop_message}}</textarea>
