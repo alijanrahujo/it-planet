@@ -127,7 +127,7 @@
                         <div class="row">
                             <div class="col-lg-6 col-md-6 col-sm-6">
                                 <div class="panel panel-default admin top-reference-area">
-                                    <div class="panel-heading">Top Referrals</div>
+                                    <div class="panel-heading">Daily Sale</div>
                                     <div class="panel-body">
                                         <div id="chartContainer-topReference"></div>
                                     </div>
@@ -135,7 +135,7 @@
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6">
                                 <div class="panel panel-default admin top-reference-area">
-                                    <div class="panel-heading">Most Used OS</div>
+                                    <div class="panel-heading">Monthly Sale</div>
                                     <div class="panel-body">
                                         <div id="chartContainer-os"></div>
                                     </div>
@@ -219,13 +219,12 @@
                         showInLegend: true,
                         legendText: "",
                         toolTipContent: "{name}: <strong>{#percent%} (#percent%)</strong>",
-                        indexLabel: "#percent%",
+                        indexLabel: "{y} (#percent%)",
                         indexLabelFontColor: "white",
                         indexLabelPlacement: "inside",
                         dataPoints: [
-                                @foreach($referrals as $browser)
-                                    {y:{{$browser->total_count}}, name: "{{$browser->referral}}"},
-                                @endforeach
+                                    {y:{{$sale_daily}}, name: "Sale"},
+                                    {y:{{$sale_daily/100*$vendor->sale_tax}}, name: "Sale Tax"},
                         ]
                     }
                 ]
@@ -253,13 +252,12 @@
                         showInLegend: true,
                         legendText: "",
                         toolTipContent: "{name}: <strong>{#percent%} (#percent%)</strong>",
-                        indexLabel: "#percent%",
+                        indexLabel: "{y} (#percent%)",
                         indexLabelFontColor: "white",
                         indexLabelPlacement: "inside",
                         dataPoints: [
-                            @foreach($browsers as $browser)
-                                {y:{{$browser->total_count}}, name: "{{$browser->referral}}"},
-                            @endforeach
+                                    {y:{{$sale_monthly}}, name: "Sale"},
+                                    {y:{{$sale_monthly/100*$vendor->sale_tax}}, name: "Sale Tax"},
                         ]
                     }
                 ]
