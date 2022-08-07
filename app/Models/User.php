@@ -23,7 +23,7 @@ class User extends Authenticatable
         'name', 'frenchise_id', 'photo', 'zip', 'residency', 'province', 'city', 'password_api', 'address',
         'phone', 'fax', 'email', 'password', 'shop_name', 'owner_name', 'shop_number', 'shop_address', 'vendor_city', 'reg_number',
         'shop_message', 'is_vendor', 'shop_details', 'f_url', 'g_url', 't_url', 'i_url', 'l_url', 'f_check', 'g_check', 't_check', 'i_check',
-        'l_check', 'shipping_cost', 'affilate_code', 'brand', 'top', 'top_by_category', 'nav_shop', 'coming_shop', 'v_type', 'top_rated', 'logo', 'gif', 'gif1', 'gif2'
+        'l_check', 'shipping_cost', 'affilate_code', 'brand', 'top', 'top_by_category', 'nav_shop', 'coming_shop', 'v_type', 'top_rated', 'logo', 'gif', 'gif1', 'gif2', 'sale_tax'
     ];
 
     protected $hidden = [
