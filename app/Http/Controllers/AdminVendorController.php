@@ -66,7 +66,7 @@ class AdminVendorController extends Controller
             $sales .=  "'".Order::where('status','=','completed')->whereDate('created_at', '=', date("Y-m-d", strtotime('-'. $i .' days')))->count()."',";
         } 
 
-        return $sale_daily = Order::where('user_id', $uid)->whereDate('created_at', '=', date('Y-m-d'))->where('status','completed')->sum('pay_amount');
+         $sale_daily = Order::where('user_id', $uid)->whereDate('created_at', '=', date('Y-m-d'))->where('status','completed')->sum('pay_amount');
         $sale_monthly = Order::where('user_id', $uid)->whereMonth('created_at', Carbon::now()->month)->where('status','completed')->sum('pay_amount');
 
         return view('admin.frenchise.vendor_dashboard',compact('products','currency_sign','pending','processing','completed','sale_daily','sale_monthly','referrals','browsers','days','sales','vendor','uid','order'));
