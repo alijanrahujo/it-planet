@@ -806,6 +806,7 @@ class AdminController extends Controller
          $query  = Frenchise::leftjoin('users','frenchises.id','=','users.frenchise_id')
         ->leftjoin('user_subscriptions','users.id','=','user_subscriptions.user_id')
         ->where('frenchise_id',$fid)
+        ->whereMonth('created_at',Carbon::now()->month)
         ->orderBy('user_subscriptions.id','desc')
         ->get(['users.shop_name','user_subscriptions.created_at','user_subscriptions.price','frenchises.frenchise_name','frenchises.registration_tax','frenchises.sale_tax','other_expenses','monthly_percentage']);
 
