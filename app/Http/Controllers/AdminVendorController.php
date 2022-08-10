@@ -292,4 +292,22 @@ class AdminVendorController extends Controller
         $withdraw->update($data);
         return redirect()->route('admin-vendor-wtt')->with('success','Withdraw Rejected Successfully');
     }
+
+    public function vendor_chartdetail(Request $request,$uid)
+    {
+       
+       // $frenchise = Frenchise::where('id', $fid)->first();
+       // $vendors = User::all()->where('frenchise_id', $frenchise->id);
+
+         $orders  = User::leftjoin('orders','users.id','=','orders.user_id')
+        ->where('users.id',$uid)
+        ->where('orders.status','=','completed')
+        ->whereMonth('orders.created_at',Carbon::now()->month)
+        ->get(['users.sale_tax','orders.*']);
+
+        // $orders = Order::where('user_id',$uid)->where('status','=','completed')->whereMonth('created_at', Carbon::now()->month)->get();
+
+
+         return view('admin.frenchise.vendor_monthly_chartdetail',compact('orders'));
+    }
 }

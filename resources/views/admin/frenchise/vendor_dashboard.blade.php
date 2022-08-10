@@ -138,6 +138,7 @@
                                     <div class="panel-heading">Monthly Sale</div>
                                     <div class="panel-body">
                                         <div id="chartContainer-os"></div>
+                                        <a href="{{route('admin-vendor-chartdetail',$uid)}}">view details</a>
                                     </div>
                                 </div>
                             </div>
