@@ -480,21 +480,69 @@ class AdminController extends Controller
 
         $dailychart = array();
 
-        // $start = $month = strtotime(date('Y-m-1'));
-        // $end = strtotime(date('Y-m-t'));
-        // while($month < $end)
-        // {
-        //     $date = date('d M', $month);
-        //     $sales = Order::where('status', '=', 'completed')->whereDate('created_at', '=', date('Y-m-d', $month))->count();
+        $month = date('Y-1-1');
 
-        //     $dailychart[] = [
-        //         "group_name" => "Total Sales",
-        //         "name" => $date,
-        //         "value" => $sales
-        //     ];
+        $chart_company = array();
+        $chart_monthly = array();
+        $chart_sale_tax = array();
+        $chart_registration_tax = array();
+        $chart_other_expenses = array();
+
+        for($i=1; $i<=12; $i++)
+        {
+            $array = array();
+            $sales = UserSubscription::whereIn('user_id', $vendors)->whereMonth('created_at', '=', date('m',strtotime($month)))->sum('price');
+            //$sales = Order::where('status', '=', 'completed')->whereMonth('created_at', '=', $month)->count();
+
+            $chart_monthly_data = $sales/100*$frenchise->monthly_percentage;
+            $chart_sale_tax_data = $sales/100*$frenchise->sale_tax;
+            $chart_registration_tax_data = $sales/100*$frenchise->registration_tax;
+            $chart_other_expenses_data = $sales/100*$frenchise->other_expenses;
+            $chart_company_data = $sales - ($chart_monthly_data+$chart_sale_tax_data+$chart_registration_tax_data+$chart_other_expenses_data);
             
-        //     $month = strtotime("+1 day", $month);
-        // }
+
+            $chart_company[] = [
+                 "group_name" => "Company",
+                 "name" => date('M',strtotime($month)),
+                 "value" => $chart_company_data
+            ];
+            
+            $chart_monthly[] = [
+                "group_name" => "Monthly",
+                "name" => date('M',strtotime($month)),
+                "value" => $chart_monthly_data
+           ];
+
+           $chart_sale_tax[] = [
+                "group_name" => "Sale Tax",
+                "name" => date('M',strtotime($month)),
+                "value" => $chart_sale_tax_data
+           ];
+
+           $chart_registration_tax[] = [
+                "group_name" => "Registration Tax",
+                "name" => date('M',strtotime($month)),
+                "value" => $chart_registration_tax_data
+           ];
+
+           $chart_other_expenses[] = [
+                "group_name" => "Other Expenses",
+                "name" => date('M',strtotime($month)),
+                "value" => $chart_other_expenses_data
+           ];
+
+            
+            $month = date('Y-m-d',strtotime("+1 month ". $month));
+        }
+
+        $dailychart = array_merge(
+            $chart_company,
+            $chart_monthly,
+            $chart_sale_tax,
+            $chart_registration_tax,
+            $chart_other_expenses
+        );
+
 
         // $start = $month = strtotime(date('Y-m-1'));
         // $end = strtotime(date('Y-m-t'));
@@ -514,6 +562,8 @@ class AdminController extends Controller
 
 
         $dailychart = json_encode($dailychart);
+
+        //return $dailychart;
 
         $days = "";
         $sales = "";
