@@ -66,10 +66,48 @@ class AdminVendorController extends Controller
             $sales .=  "'".Order::where('status','=','completed')->whereDate('created_at', '=', date("Y-m-d", strtotime('-'. $i .' days')))->count()."',";
         } 
 
-         $sale_daily = Order::where('user_id', $uid)->whereDate('created_at', '=', date('Y-m-d'))->where('status','completed')->sum('pay_amount');
+        $sale_daily = Order::where('user_id', $uid)->whereDate('created_at', '=', date('Y-m-d'))->where('status','completed')->sum('pay_amount');
         $sale_monthly = Order::where('user_id', $uid)->whereMonth('created_at', Carbon::now()->month)->where('status','completed')->sum('pay_amount');
 
-        return view('admin.frenchise.vendor_dashboard',compact('products','currency_sign','pending','processing','completed','sale_daily','sale_monthly','referrals','browsers','days','sales','vendor','uid','order'));
+        
+        //Yearly chart month wise
+        $yearlychart = array();
+        $month = date('Y-1-1');
+        $chart_sale = array();
+        $chart_sale_tax = array();
+        
+        for($i=1; $i<=12; $i++)
+        {
+            $array = array();
+            $sales = Order::where('user_id', $uid)->whereYear('created_at', '=', date('Y',strtotime($month)))->whereMonth('created_at', '=', date('m',strtotime($month)))->sum('pay_amount');
+            
+            $chart_sale_tax_data = $sales/100*$vendor->sale_tax;
+            $chart_sale_data = $sales-$chart_sale_tax_data;
+
+            $chart_sale[] = [
+                 "group_name" => "Sale",
+                 "name" => date('M',strtotime($month)),
+                 "value" => $chart_sale_data
+            ];
+            
+            $chart_sale_tax[] = [
+                "group_name" => "Sale Tax",
+                "name" => date('M',strtotime($month)),
+                "value" => $chart_sale_data
+           ];
+
+            $month = date('Y-m-d',strtotime("+1 month ". $month));
+        }
+
+        $yearlychart = array_merge(
+            $chart_sale,
+            $chart_sale_tax
+        );
+        $yearlychart = json_encode($yearlychart);
+        //End Yearly chart month wise
+
+
+        return view('admin.frenchise.vendor_dashboard',compact('yearlychart','products','currency_sign','pending','processing','completed','sale_daily','sale_monthly','referrals','browsers','days','sales','vendor','uid','order'));
     }
 
     public function customerlist($fid)

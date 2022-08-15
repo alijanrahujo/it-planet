@@ -145,6 +145,15 @@
                         </div>
                     </div>
                     <!-- Ending of Dashboard Top reference + Most Used OS area -->
+
+                    <div class="panel panel-default admin">
+                        <div class="panel-heading admin-title">Total Sales of <?php echo date('Y') ?></div>
+                            <div class="panel-body dashboard-body">
+                                <div id="chtAnimatedBarChart" class="bcBar"></div>
+                            </div>
+                        </div>
+                    <div>
+
                         <!-- Starting of Dashboard header items area -->
                         <div class="panel panel-default admin">
                           <div class="panel-heading admin-title">Total Sales in Last 30 Days</div>
@@ -168,6 +177,15 @@
 @section('scripts')
 
     <script language="JavaScript">
+
+        $(function() {
+            //var chart_data = getData();
+            var chart_data = {!! $yearlychart !!};
+
+            $('#chtAnimatedBarChart').animatedBarChart({ data: chart_data });
+        });
+
+
         displayLineChart();
         function displayLineChart() {
             var data = {

@@ -179,7 +179,7 @@
 
     $(function() {
       //var chart_data = getData();
-      var chart_data = {!! $dailychart !!};
+      var chart_data = {!! $yearlychart !!};
 
       $('#chtAnimatedBarChart').animatedBarChart({ data: chart_data });
    });
