@@ -242,7 +242,7 @@
                         indexLabelFontColor: "white",
                         indexLabelPlacement: "inside",
                         dataPoints: [
-                            { y: {{$userSubscription_daily-(($userSubscription_daily/100*$frenchise->percentage)+($userSubscription_daily/100*$frenchise->sale_tax)+($userSubscription_daily/100*$frenchise->registration_tax)+($userSubscription_daily/100*$frenchise->other_expenses))}}, name: "Company" },
+                            { y: {{$userSubscription_daily-(($userSubscription_daily/100*$frenchise->monthly_percentage)+($userSubscription_daily/100*$frenchise->sale_tax)+($userSubscription_daily/100*$frenchise->registration_tax)+($userSubscription_daily/100*$frenchise->other_expenses))}}, name: "Company" },
                             { y: {{$userSubscription_daily/100*$frenchise->monthly_percentage}}, name: "Monthly" },
                             { y: {{$userSubscription_daily/100*$frenchise->sale_tax}}, name: "Sale Tax" },
                             { y: {{$userSubscription_daily/100*$frenchise->registration_tax}},  name: "Registration Tax" },
@@ -294,7 +294,7 @@
                         indexLabelFontColor: "white",
                         indexLabelPlacement: "inside",
                         dataPoints: [
-                            { y: {{$userSubscription_monthly-(($userSubscription_monthly/100*$frenchise->percentage)+($userSubscription_monthly/100*$frenchise->sale_tax)+($userSubscription_monthly/100*$frenchise->registration_tax)+($userSubscription_monthly/100*$frenchise->other_expenses))}}, name: "Company" },
+                            { y: {{$userSubscription_monthly-(($userSubscription_monthly/100*$frenchise->monthly_percentage)+($userSubscription_monthly/100*$frenchise->sale_tax)+($userSubscription_monthly/100*$frenchise->registration_tax)+($userSubscription_monthly/100*$frenchise->other_expenses))}}, name: "Company" },
                             { y: {{$userSubscription_monthly/100*$frenchise->monthly_percentage}}, name: "Monthly" },
                             { y: {{$userSubscription_monthly/100*$frenchise->sale_tax}}, name: "Sale Tax" },
                             { y: {{$userSubscription_monthly/100*$frenchise->registration_tax}},  name: "Registration Tax" },
