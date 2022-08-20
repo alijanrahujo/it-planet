@@ -469,14 +469,20 @@ class AdminController extends Controller
         $cust = Order::whereIn('id', $c_order)->groupBy('user_id')->pluck('user_id');
         $customer = Customer::whereIn('id', $cust)->orderBy('id', 'desc')->get();
 
+        $duration = '+'. $frenchise->duration . ' years';
+        $select_date = UserSubscription::whereIn('user_id', $vendors)->first();
+        $start_date = $select_date->created_at->format('Y-m-d');
+        $end_date = date('Y-m-d',strtotime($duration.$start_date));
 
         $userSubscription_daily = UserSubscription::whereIn('user_id', $vendors)->whereDate('created_at', '=', date('Y-m-d'))->sum('price');
         $userSubscription_monthly = UserSubscription::whereIn('user_id', $vendors)->whereMonth('created_at', Carbon::now()->month)->sum('price');
         $userSubscription_yearly = UserSubscription::whereIn('user_id', $vendors)->whereYear('created_at', Carbon::now()->year)->sum('price');
+        $userSubscription_contract = UserSubscription::whereIn('user_id', $vendors)->where('created_at','<=', $end_date)->sum('price');
 
         if(!$userSubscription_daily){ $userSubscription_daily=1; }
         if(!$userSubscription_monthly){$userSubscription_monthly = 1;}
         if(!$userSubscription_yearly){$userSubscription_yearly=1;}
+        if(!$userSubscription_contract){$userSubscription_yearly=1;}
 
 
         //Yearly chart month wise
@@ -562,7 +568,7 @@ class AdminController extends Controller
         //     $days .= "'" . date("d M", strtotime('-' . $i . ' days')) . "',";
         //     $sales .=  "'" . Order::where('status', '=', 'completed')->whereDate('created_at', '=', date("Y-m-d", strtotime('-' . $i . ' days')))->count() . "',";
         // }
-        return view('admin.frenchise.frenchise_dashboard', compact('customer', 'products', 'currency_sign', 'frenchise', 'count_vendor', 'pending', 'processing', 'completed', 'referrals', 'browsers', 'fid', 'days', 'sales','yearlychart','userSubscription_daily','userSubscription_monthly','userSubscription_yearly'));
+        return view('admin.frenchise.frenchise_dashboard', compact('customer', 'products', 'currency_sign', 'frenchise', 'count_vendor', 'pending', 'processing', 'completed', 'referrals', 'browsers', 'fid', 'days', 'sales','yearlychart','userSubscription_daily','userSubscription_monthly','userSubscription_yearly','userSubscription_contract'));
     }
 
     public function newupdates()
@@ -835,7 +841,7 @@ class AdminController extends Controller
          $query  = Frenchise::leftjoin('users','frenchises.id','=','users.frenchise_id')
         ->leftjoin('user_subscriptions','users.id','=','user_subscriptions.user_id')
         ->where('frenchise_id',$fid)
-        ->whereMonth('created_at',Carbon::now()->month)
+        ->whereMonth('user_subscriptions.created_at',Carbon::now()->month)
         ->orderBy('user_subscriptions.id','desc')
         ->get(['users.shop_name','user_subscriptions.created_at','user_subscriptions.price','frenchises.frenchise_name','frenchises.registration_tax','frenchises.sale_tax','other_expenses','monthly_percentage']);
 

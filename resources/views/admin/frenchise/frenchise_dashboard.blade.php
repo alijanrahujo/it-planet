@@ -154,19 +154,22 @@
                     <div>
                     
                     <!-- Ending of Dashboard Top reference + Most Used OS area -->
-                        <!-- Starting of Dashboard header items area -->
-                        <div class="panel panel-default admin">
-                          <div class="panel-heading admin-title">Total Sales in Last 30 Days</div>
-                              <div class="panel-body dashboard-body">
-                                  <div class="dashboard-header-area">
-                                    <div class="row">
-                                        <div class="col-sm-12 col-md-12 col-lg-12 col-xs-12" style="padding: 0">
-                                            <canvas id="lineChart" style="width: 100%"></canvas>
-                                        </div>     
+
+                    <!-- Starting of Dashboard Top reference + Most Used OS area -->
+                    <div class="reference-OS-area">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="panel panel-default admin top-reference-area">
+                                    <div class="panel-heading">Till End of Contract</div>
+                                    <div class="panel-body">
+                                        <div id="chartContainer-contract"></div>
                                     </div>
                                 </div>
                             </div>
-                        </div>                 
+                            
+                        </div>
+                    </div>
+                                   
             </div>
         </div>
     </div>
@@ -314,6 +317,57 @@
                     chart2.options.data[0].dataPoints[i].percentage = 100;
                 } else {
                     chart2.options.data[0].dataPoints[i].percentage = ((dataPoint[i].y / total) * 100).toFixed(2);
+                }
+            }
+        }
+
+        var chart3 = new CanvasJS.Chart("chartContainer-contract",
+            {
+                exportEnabled: true,
+                animationEnabled: true,
+
+                legend: {
+                    cursor: "pointer",
+                    horizontalAlign: "right",
+                    verticalAlign: "center",
+                    fontSize: 16,
+                    padding: {
+                        top: 20,
+                        bottom: 2,
+                        right: 20,
+                    },
+                },
+                data: [
+                    {
+                        type: "pie",
+                        showInLegend: true,
+                        legendText: "",
+                        toolTipContent: "{name}: <strong>{#percent%} (#percent%)</strong>",
+                        indexLabel: "{y} (#percent%)",
+                        percentFormatString: "#0.##",
+                        indexLabelFontColor: "white",
+                        indexLabelPlacement: "inside",
+                        dataPoints: [
+                            { y: {{$userSubscription_contract-(($userSubscription_contract/100*$frenchise->monthly_percentage)+($userSubscription_contract/100*$frenchise->sale_tax)+($userSubscription_contract/100*$frenchise->registration_tax)+($userSubscription_contract/100*$frenchise->other_expenses))}}, name: "Company" },
+                            { y: {{$userSubscription_contract/100*$frenchise->monthly_percentage}}, name: "Monthly" },
+                            { y: {{$userSubscription_contract/100*$frenchise->sale_tax}}, name: "Sale Tax" },
+                            { y: {{$userSubscription_contract/100*$frenchise->registration_tax}},  name: "Registration Tax" },
+                            { y: {{$userSubscription_contract/100*$frenchise->other_expenses}},  name: "Other Expenses" }
+                        ]
+                    }
+                ]
+            });
+        calculatePercentage3();
+        chart3.render();
+
+        function calculatePercentage3() {
+            var dataPoint = chart3.options.data[0].dataPoints;
+            var total = dataPoint[0].y;
+            for(var i = 0; i < dataPoint.length; i++) {
+                if(i == 0) {
+                    chart3.options.data[0].dataPoints[i].percentage = 100;
+                } else {
+                    chart3.options.data[0].dataPoints[i].percentage = ((dataPoint[i].y / total) * 100).toFixed(2);
                 }
             }
         }
