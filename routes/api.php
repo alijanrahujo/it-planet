@@ -106,12 +106,16 @@ Route::get('/charges/leopard/{product}/{vendor}/{city}', 'App\Http\Controllers\S
 
 Route::get('/test', 'App\Http\Controllers\Shipping\LeopardsController@test');
 
+Route::middleware(['auth:sanctum'])->group(function () {
+  Route::post('/customer_profile', 'App\Http\Controllers\API\Auth\CustomerAuthController@customer_profile');
+});
+
 //Customer
 Route::post('/customer_register', 'App\Http\Controllers\API\Auth\CustomerAuthController@register');
 Route::post('/customer_login', 'App\Http\Controllers\API\Auth\CustomerAuthController@customerlogin');
 Route::post('/customer_forgot', 'App\Http\Controllers\API\Auth\CustomerAuthController@customer_forgot');
 
-Route::post('/customer_profile', 'App\Http\Controllers\API\Auth\CustomerAuthController@customer_profile');
+
 
 Route::get('/shops', 'App\Http\Controllers\API\Customer\FrontendController@shops');
 Route::get('/countries', 'App\Http\Controllers\API\Customer\FrontendController@countries');
