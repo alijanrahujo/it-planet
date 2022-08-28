@@ -23,6 +23,7 @@ use App\Models\Vendororder;
 use App\Models\UserNotification;
 use App\Models\VendorSubscription;
 use App\Models\UserSubscription;
+use Illuminate\Support\Facades\Validator;
 
 use Carbon\Carbon;
 
@@ -146,24 +147,28 @@ class AdminController extends Controller
 
     public function changepass(Request $request)
     {
+        $validator = $this->validate($request, [
+        'newpass' => 'min:8',
+        'renewpass' => 'same:newpass'
+        
+        ]);
+
         $admin = Auth::guard('admin')->user();
-        if ($request->cpass) {
+       
             if (Hash::check($request->cpass, $admin->password)) {
-                if ($request->newpass == $request->renewpass) {
-                    $input['password'] = Hash::make($request->newpass);
-                } else {
-                    Session::flash('unsuccess', 'Confirm password does not match.');
-                    return redirect()->back();
-                }
+                
+                $input['password'] = Hash::make($request->newpass);
+                $admin->update($input);
+                Session::flash('success', 'Successfully updated your password');
+                return redirect()->back();
+               
             } else {
                 Session::flash('unsuccess', 'Current password Does not match.');
                 return redirect()->back();
             }
-        }
-        $admin->update($input);
-        Session::flash('success', 'Successfully updated your password');
-        return redirect()->back();
     }
+
+
     public function messages()
     {
         $convs = AdminUserConversation::all();

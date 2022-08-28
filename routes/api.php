@@ -108,12 +108,15 @@ Route::get('/test', 'App\Http\Controllers\Shipping\LeopardsController@test');
 
 Route::middleware(['auth:sanctum'])->group(function () {
   Route::post('/customer_profile', 'App\Http\Controllers\API\Auth\CustomerAuthController@customer_profile');
+
+  Route::post('/customer_change_password', 'App\Http\Controllers\API\Auth\CustomerAuthController@customer_change_password');
 });
 
 //Customer
 Route::post('/customer_register', 'App\Http\Controllers\API\Auth\CustomerAuthController@register');
 Route::post('/customer_login', 'App\Http\Controllers\API\Auth\CustomerAuthController@customerlogin');
 Route::post('/customer_forgot', 'App\Http\Controllers\API\Auth\CustomerAuthController@customer_forgot');
+
 
 
 

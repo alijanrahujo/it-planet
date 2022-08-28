@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Session;
 use App\Models\Generalsetting;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 
 
 class CustomerAuthController extends Controller
@@ -144,5 +145,44 @@ class CustomerAuthController extends Controller
     ]);
     
   }
+
+
+  public function customer_change_password(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+        'new_password' => 'min:8',
+        ]);
+
+        if ($validator->fails())
+        {
+          return response()->json([
+                'status_code' => 500,
+                'status' => 0,
+                'unsuccess' => 'New password must be 8 characters'
+              ]);
+        }
+        else
+        {
+          $customer = Customer::where('id',$request->customer_id)->first();
+          if (Hash::check($request->current_password, $customer->password)) {
+                $input['password'] = Hash::make($request->new_password);
+                $customer->update($input);
+
+              return response()->json([
+                'status_code' => 500,
+                'status' => 0,
+                'success' => 'Successfully updated your password',
+              ]);
+  
+               
+          } else {
+                 return response()->json([
+                'status_code' => 500,
+                'status' => 0,
+                'unsuccess' => 'Current password Does not match.',
+              ]);
+            }
+        }  
+    }
 
 }
