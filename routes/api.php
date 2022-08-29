@@ -83,6 +83,9 @@ Route::get('/getcatpros/{id}', 'App\Http\Controllers\API\ProductController@categ
 Route::get('/getsubcatpros/{id}', 'App\Http\Controllers\API\ProductController@subcategorypros');
 Route::get('/getchildcatpros/{id}', 'App\Http\Controllers\API\ProductController@childcategorypros');
 
+//cart
+Route::post('/addcart', 'App\Http\Controllers\API\Customer\CartController@add_to_cart');
+
 // Shawal Ahmad Mohmand
 Route::get('/get/sliders/all', 'App\Http\Controllers\API\SliderController@get_sliders_all');
 
