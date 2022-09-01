@@ -148,3 +148,8 @@ Route::prefix('advance_search')->group(function () {
 Route::get('/', 'App\Http\Controllers\API\Customer\FrontendController@advance_search');
 Route::get('/product', 'App\Http\Controllers\API\Customer\FrontendController@productsearch');
 });
+
+
+ Route::get('google_login','App\Http\Controllers\API\Auth\GoogleController@loginWithGoogle');
+
+Route::post('callback', 'App\Http\Controllers\API\Auth\GoogleController@callbackFromGoogle', 'callbackFromGoogle');
