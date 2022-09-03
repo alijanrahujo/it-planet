@@ -120,7 +120,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 //Customer
 Route::post('/customer_register', 'App\Http\Controllers\API\Auth\CustomerAuthController@register');
 Route::post('/customer_login', 'App\Http\Controllers\API\Auth\CustomerAuthController@customerlogin');
-Route::post('/customer_forgot', 'App\Http\Controllers\API\Auth\CustomerAuthController@customer_forgot');
+Route::post('/customer_forgot_password', 'App\Http\Controllers\API\Auth\CustomerAuthController@customer_forgot');
 
 
 

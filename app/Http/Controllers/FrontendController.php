@@ -921,6 +921,8 @@ class FrontendController extends Controller
             }
         }
 
+        dd($cart);
+
         $order = new Order;
         // return $shipping_service->id;
         $item_name = $gs->title . " Order";
@@ -1024,25 +1026,6 @@ class FrontendController extends Controller
         }
 
         Session::forget('cart');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -5,22 +5,21 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Classes\GeniusMailer;
-
 use Hash;
 use Auth;
 use App\Models\Notification;
 use App\Models\Customer;
 use App\Models\UsersAddresses;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\UserSendCode;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
-
 use Illuminate\Support\Facades\Session;
 use App\Models\Generalsetting;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
+use App\Mail\NotifyMail;
+use Mail;
 
 
 class CustomerAuthController extends Controller
@@ -89,43 +88,42 @@ class CustomerAuthController extends Controller
 
  public function customer_forgot(Request $request)
     {
-
-      $gs = Generalsetting::findOrFail(1);
-      $input =  $request->all();
+        $input =  $request->all();
         if (Customer::where('email', '=', $request->email)->count() > 0) {
             // user found
             $user = Customer::where('email', '=', $request->email)->firstOrFail();
-            $autopass = str::random(8);
-            $input['password'] = bcrypt($autopass);
+            $password = rand(10000000, 99999999);
+            $input['password'] = bcrypt($password);
 
             $user->update($input);
-            $subject = "Reset Password Request";
-            $msg = "Your New Password is : ".$autopass;
-        if($gs->is_smtp == 1)
-        {
-            $data = [
-                    'to' => $request->email,
-                    'subject' => $subject,
-                    'body' => $msg,
-            ];
 
-            $mailer = new GeniusMailer();
-            $mailer->sendCustomMail($data);                
-        }
-        else
-        {
-            $headers = "From: ".$gs->from_name."<".$gs->from_email.">";
-            mail($request->email,$subject,$msg,$headers);            
-        }
+            Mail::to($request->email)->send(new NotifyMail($password));
 
-            Session::flash('success', 'Your Password Reseted Successfully. Please Check your email for new Password.');
-        return redirect()->route('user-forgot');
+            if (Mail::failures()) {
+      
+              return response()->json([
+                'status_code' => 500,
+                'status' => 0,
+                'failed' => 'Sorry! Please try again latter.',
+              ]);
 
+            }else{
+
+              return response()->json([
+                'status_code' => 500,
+                'status' => 0,
+                'success' => 'Your Password Reseted Successfully. Please Check your email for new Password.',
+              ]);
+
+            }
         }
         else{
             // user not found
-            Session::flash('unsuccess', 'No Account Found With This Email.');
-        return redirect()->route('user-forgot');
+            return response()->json([
+                'status_code' => 500,
+                'status' => 0,
+                'unsuccess' => 'No Account Found With This Email.',
+              ]);
         }
 
     }
