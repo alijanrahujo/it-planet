@@ -19,6 +19,15 @@ class OrderController extends Controller
 {
     public function order(Request $request)
     {
+        if(!auth('sanctum')->check())
+        {
+            return response()->json([
+                'status_code' => 401,
+                'status' => 1,
+                'message' => 'Invalid Auth Token',
+              ]);
+        }
+
         $totalQty = 0;
         $shipping_service = $request->shipping_service;
         $curr = Currency::where('is_default', '=', 1)->first();
