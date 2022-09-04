@@ -87,6 +87,7 @@ Route::get('/getchildcatpros/{id}', 'App\Http\Controllers\API\ProductController@
 Route::post('/addcart', 'App\Http\Controllers\API\Customer\CartController@add_to_cart');
 Route::get('/getcart', 'App\Http\Controllers\API\Customer\CartController@getcart');
 Route::get('/deleteitem/{id}', 'App\Http\Controllers\API\Customer\CartController@delete_item');
+Route::post('/order', 'App\Http\Controllers\API\Customer\OrderController@order');
 
 // Shawal Ahmad Mohmand
 Route::get('/get/sliders/all', 'App\Http\Controllers\API\SliderController@get_sliders_all');
