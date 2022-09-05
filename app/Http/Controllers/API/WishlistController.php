@@ -89,6 +89,7 @@ class WishlistController extends Controller {
         'message' => 'This product already exist in favourite!'
       ]);
     }
+    
     $a = Wishlist::create($payload);
     $fav_list = Wishlist::all()->where('user_id','=',$user->id);
 

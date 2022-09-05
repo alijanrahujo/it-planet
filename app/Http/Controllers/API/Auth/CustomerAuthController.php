@@ -144,6 +144,28 @@ class CustomerAuthController extends Controller
     
   }
 
+  public function customer_edit_profile(Request $request)
+  {
+    $customer = Auth::user();
+
+    $customer_profile= Customer::where('id',$customer->id)->update([
+      'name' => $request->name,
+      'email' => $request->email,
+      'dob' => $request->dob,
+      'gender' => $request->gender,
+      'city' => $request->city,
+      'address' => $request->address,
+      'phone' => $request->phone
+    ]);
+
+    return response()->json([
+      'status_code' => 200,
+      'status' => 1,
+      'success' => 'your profile updated successfully.',
+    ]);
+    
+  }
+
 
   public function customer_change_password(Request $request)
     {

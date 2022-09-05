@@ -35,9 +35,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::post('/user/update/photo','App\Http\Controllers\API\Auth\AuthController@update_photo');
   Route::post('/user/update/password', 'App\Http\Controllers\API\Auth\AuthController@userchangepassword');
 
-  Route::get('/get/favourite/products', 'App\Http\Controllers\API\WishlistController@fetch');
-  Route::post('/add/favourite/product', 'App\Http\Controllers\API\WishlistController@create');
-  Route::post('/remove/favourite/product', 'App\Http\Controllers\API\WishlistController@delete');
+  
 
   Route::get('/user/orders', 'App\Http\Controllers\API\OrderController@fetch');
   Route::post('/user/create/order', 'App\Http\Controllers\API\OrderController@create');
@@ -113,9 +111,14 @@ Route::get('/charges/leopard/{product}/{vendor}/{city}', 'App\Http\Controllers\S
 Route::get('/test', 'App\Http\Controllers\Shipping\LeopardsController@test');
 
 Route::middleware(['auth:sanctum'])->group(function () {
-  Route::post('/customer_profile', 'App\Http\Controllers\API\Auth\CustomerAuthController@customer_profile');
+Route::post('/customer_profile', 'App\Http\Controllers\API\Auth\CustomerAuthController@customer_profile');
+Route::put('/customer_edit_profile', 'App\Http\Controllers\API\Auth\CustomerAuthController@customer_edit_profile');
+Route::post('/customer_change_password', 'App\Http\Controllers\API\Auth\CustomerAuthController@customer_change_password');
 
-  Route::post('/customer_change_password', 'App\Http\Controllers\API\Auth\CustomerAuthController@customer_change_password');
+Route::get('/get_favourite_products', 'App\Http\Controllers\API\WishlistController@fetch');
+Route::post('/add_favourite_product', 'App\Http\Controllers\API\WishlistController@create');
+Route::post('/remove_favourite_product', 'App\Http\Controllers\API\WishlistController@delete');
+
 });
 
 //Customer
