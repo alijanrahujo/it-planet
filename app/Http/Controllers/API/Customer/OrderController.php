@@ -67,7 +67,7 @@ class OrderController extends Controller
               $prod->cprice = round($price, 2);
           }
 
-          $cart[$prod->id] = 
+          $cart['items'][$prod->id] = 
           [
             "qty" => $qty,
             "size" => $size,
@@ -80,6 +80,8 @@ class OrderController extends Controller
           ];
           
         }
+
+        
 
 
         $order = new Order;
@@ -152,7 +154,7 @@ class OrderController extends Controller
             }
             $coupon->update();
         }
-        foreach ($cart as $prod) {
+        foreach ($cart['items'] as $prod) {
             $x = (string)$prod['stock'];
             if ($x != null) {
 
@@ -169,7 +171,7 @@ class OrderController extends Controller
                 }
             }
         }
-        foreach ($cart as $prod) {
+        foreach ($cart['items'] as $prod) {
             if ($prod['item']['user_id'] != 0) {
                 $vorder =  new Vendororder;
                 $vorder->order_id = $order->id;
