@@ -14,6 +14,8 @@ use App\Models\FrenchiseNotification;
 use App\Models\UserNotification;
 use App\Models\Coupon;
 use App\Models\Vendororder;
+use App\Models\State;
+use App\Models\Country;
 
 class OrderController extends Controller
 {
@@ -29,11 +31,12 @@ class OrderController extends Controller
         }
 
         $totalQty = 0;
+        $paid_amount = 0;
         $shipping_service = $request->shipping_service;
         $curr = Currency::where('is_default', '=', 1)->first();
         $shippment_charges = 0;
         
-        $cart = array();
+        $temp_cart = array();
         foreach ($request->items as $item) 
         {            
           $id = $item['id'];
@@ -67,7 +70,7 @@ class OrderController extends Controller
               $prod->cprice = round($price, 2);
           }
 
-          $cart['items'][$prod->id] = 
+          $temp_cart[$prod->id] = 
           [
             "qty" => $qty,
             "size" => $size,
@@ -78,12 +81,15 @@ class OrderController extends Controller
             "license" => "",
             "shipping_charges" => 0
           ];
+
+          $paid_amount += $prod->cprice*$qty;
+
           
         }
 
+        $cart = (object) array();
+        $cart->items = $temp_cart; 
         
-
-
         $order = new Order;
         // return $shipping_service->id;
         $item_name = $gs->title . " Order";
@@ -92,7 +98,7 @@ class OrderController extends Controller
 
         $order['cart'] = utf8_encode(gzcompress(serialize($cart), 9));
         $order['totalQty'] = $totalQty;
-        //$order['pay_amount'] = round(($request->total) / $curr->value, 2);
+        $order['pay_amount'] = round($paid_amount / $curr->value, 2);
         $order['method'] = "pending";
         $order['shipping'] = $request->shipping;
         $order['shipping_service'] = $shipping_service['id']??'';
@@ -154,7 +160,7 @@ class OrderController extends Controller
             }
             $coupon->update();
         }
-        foreach ($cart['items'] as $prod) {
+        foreach ($cart->items as $prod) {
             $x = (string)$prod['stock'];
             if ($x != null) {
 
@@ -171,7 +177,7 @@ class OrderController extends Controller
                 }
             }
         }
-        foreach ($cart['items'] as $prod) {
+        foreach ($cart->items as $prod) {
             if ($prod['item']['user_id'] != 0) {
                 $vorder =  new Vendororder;
                 $vorder->order_id = $order->id;
@@ -189,6 +195,96 @@ class OrderController extends Controller
             'status_code' => 200,
             'status' => 1,
             'message' => 'Successfully added to Order',
+            'order_id' => $order->id
         ]);  
+    }
+
+    public function payment(Request $request)
+    {
+        $id = $request->order_id;
+        $payment_method = $request->payment_method;
+
+
+        $order = Order::find($id);
+        $states = State::all();
+        $country = new Country;
+        $countries = $country->get_countries();
+
+        if($payment_method == "bank")
+        {
+            $data = array(
+                "HS_MerchantId" => 3162,
+                "HS_StoreId" => '011925',
+                "HS_MerchantHash" => 'OUU362MB1uqOvabSg7KsREd15e+opQs5xXBRMsmPw/EuZIlEb1IyqYaLW6J1b44w',
+                "HS_MerchantUsername" => 'abumub',
+                "HS_MerchantPassword" => 'JVthGzAvw6ZvFzk4yqF7CA==',
+                "HS_IsRedirectionRequest" => 1,
+                "HS_ReturnURL" => route('alfapayment', $order->id),
+                "HS_RequestHash" => "",
+                "HS_ChannelId" => 1001,
+                "HS_TransactionReferenceNumber" => $order->id,
+            );
+
+            $data = json_encode($data);
+
+            $ch = curl_init('https://sandbox.bankalfalah.com/HS/HS/HS');
+            # Setup request to send json via POST.
+            
+            curl_setopt( $ch, CURLOPT_POSTFIELDS, $data );
+            curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+            # Return response instead of printing.
+            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+            # Send request.
+            $result = json_decode(curl_exec($ch));
+            curl_close($ch);
+            # Print response.
+            
+
+            if(isset($result) && $result->success != 'false')
+            {
+
+                return response()->json([
+                    'status_code' => 200,
+                    'status' => 1,
+                    'message' => 'Payment successfully processed',
+                    'data' => $result,
+                    'order' => $order = Order::find($id)
+                ]);
+            }
+            else
+            {
+
+                return response()->json([
+                    'status_code' => 402,
+                    'status' => 0,
+                    'message' => 'Payment can not process! API issue',
+                    'data' => $result
+                ]); 
+            }
+        }
+        else if($payment_method == "cash on delivery")
+        {
+            Order::where('id',$id)->update(['method'=>"cash on delivery"]);
+            return response()->json([
+                'status_code' => 200,
+                'status' => 1,
+                'message' => 'Order cash on delivery successfully updated',
+                'order' => $order = Order::find($id)
+            ]);
+        }
+        else
+        {
+            return response()->json([
+                'status_code' => 405,
+                'status' => 0,
+                'message' => 'Invalid Payment Method! use bank or cash on delivery',
+            ]);
+        }
+
+        return response()->json([
+            'status_code' => 400,
+            'status' => 0,
+            'message' => 'Bad Request',
+        ]);
     }
 }
