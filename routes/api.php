@@ -86,6 +86,7 @@ Route::post('/addcart', 'App\Http\Controllers\API\Customer\CartController@add_to
 Route::get('/getcart', 'App\Http\Controllers\API\Customer\CartController@getcart');
 Route::get('/deleteitem/{id}', 'App\Http\Controllers\API\Customer\CartController@delete_item');
 Route::post('/order', 'App\Http\Controllers\API\Customer\OrderController@order');
+Route::post('/payment', 'App\Http\Controllers\API\Customer\OrderController@payment');
 
 // Shawal Ahmad Mohmand
 Route::get('/get/sliders/all', 'App\Http\Controllers\API\SliderController@get_sliders_all');
