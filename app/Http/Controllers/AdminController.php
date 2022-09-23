@@ -480,7 +480,7 @@ class AdminController extends Controller
         $end_date = date('Y-m-d',strtotime($duration.$start_date));
 
         $userSubscription_daily = UserSubscription::whereIn('user_id', $vendors)->whereDate('created_at', '=', date('Y-m-d'))->sum('price');
-        $userSubscription_monthly = UserSubscription::whereIn('user_id', $vendors)->whereMonth('created_at', Carbon::now()->month)->sum('price');
+        $userSubscription_monthly = UserSubscription::whereIn('user_id', $vendors)->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->sum('price');
         $userSubscription_yearly = UserSubscription::whereIn('user_id', $vendors)->whereYear('created_at', Carbon::now()->year)->sum('price');
         $userSubscription_contract = UserSubscription::whereIn('user_id', $vendors)->where('created_at','<=', $end_date)->sum('price');
 

@@ -67,7 +67,7 @@ class AdminVendorController extends Controller
         } 
 
         $sale_daily = Order::where('user_id', $uid)->whereDate('created_at', '=', date('Y-m-d'))->where('status','completed')->sum('pay_amount');
-        $sale_monthly = Order::where('user_id', $uid)->whereMonth('created_at', Carbon::now()->month)->where('status','completed')->sum('pay_amount');
+        $sale_monthly = Order::where('user_id', $uid)->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->where('status','completed')->sum('pay_amount');
 
         
         //Yearly chart month wise

@@ -116,7 +116,7 @@ class AdminSubHeadOfficeController extends Controller
         //$order   = Order::whereIn('user_id', $vendors)->get();
 
         $userSubscription_daily = UserSubscription::whereIn('user_id', $vendors)->whereDate('created_at', '=', date('Y-m-d'))->sum('price');
-        $userSubscription_monthly = UserSubscription::whereIn('user_id', $vendors)->whereMonth('created_at', Carbon::now()->month)->sum('price');
+        $userSubscription_monthly = UserSubscription::whereIn('user_id', $vendors)->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->sum('price');
         $userSubscription_yearly = UserSubscription::whereIn('user_id', $vendors)->whereYear('created_at', Carbon::now()->year)->sum('price');
 
 
