@@ -272,10 +272,19 @@ class FrontendController extends Controller
     {
       $hot_sale = Product::where('hot','==',1)->get();
 
+      $data= array();
+
+      foreach ($hot_sale as $key1 => $hot_sales) 
+      {
+        $data[$key1] = $hot_sales;
+        $data[$key1]['description'] = strip_tags($hot_sales['description']);
+
+      }
+
       return response()->json([
         'status_code' => 200,
         'status' => 1,
-        'data' => strip_tags($hot_sale),
+        'data' => $data,
       ]);
 
   }
