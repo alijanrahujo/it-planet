@@ -113,26 +113,27 @@
                 <!-- Ending of Dashboard header items area -->
 
                 <!-- Starting of Dashboard Top reference + Most Used OS area -->
-                <div class="reference-OS-area">
-                    <div class="row">
-                        <div class="col-lg-6 col-md-6 col-sm-6">
-                            <div class="panel panel-default admin top-reference-area">
-                                <div class="panel-heading">Top Referrals</div>
-                                <div class="panel-body">
-                                    <div id="chartContainer-topReference"></div>
+                 <div class="reference-OS-area">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="panel panel-default admin top-reference-area">
+                                    <div class="panel-heading">Daily Chart</div>
+                                    <div class="panel-body">
+                                        <div id="chartContainer-topReference"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-lg-6 col-md-6 col-sm-6">
-                            <div class="panel panel-default admin top-reference-area">
-                                <div class="panel-heading">Most Used OS</div>
-                                <div class="panel-body">
-                                    <div id="chartContainer-os"></div>
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="panel panel-default admin top-reference-area">
+                                    <div class="panel-heading">Monthly Chart</div>
+                                    <div class="panel-body">
+                                        <div id="chartContainer-os"></div>
+                                        <a href="">view details</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 <!-- Ending of Dashboard Top reference + Most Used OS area -->
                 <!-- Starting of Dashboard header items area -->
                 <div class="panel panel-default admin">
@@ -182,73 +183,108 @@
     </script>
 
     <script type="text/javascript">
-        var chart1 = new CanvasJS.Chart("chartContainer-topReference", {
-            exportEnabled: true,
-            animationEnabled: true,
+        var chart1 = new CanvasJS.Chart("chartContainer-topReference",
+            {
+                exportEnabled: true,
+                animationEnabled: true,
 
-            legend: {
-                cursor: "pointer",
-                horizontalAlign: "right",
-                verticalAlign: "center",
-                fontSize: 16,
-                padding: {
-                    top: 20,
-                    bottom: 2,
-                    right: 20,
+                legend: {
+                    cursor: "pointer",
+                    horizontalAlign: "right",
+                    verticalAlign: "center",
+                    fontSize: 16,
+                    padding: {
+                        top: 20,
+                        bottom: 2,
+                        right: 20,
+                    },
                 },
-            },
-            data: [{
-                type: "pie",
-                showInLegend: true,
-                legendText: "",
-                toolTipContent: "{name}: <strong>{#percent%} (#percent%)</strong>",
-                indexLabel: "#percent%",
-                indexLabelFontColor: "white",
-                indexLabelPlacement: "inside",
-                dataPoints: [
-                    @foreach($referrals as $browser)
+                data: [
                     {
-                        y: {{ $browser->total_count }},
-                        name: "{{$browser->referral}}"
+                        type: "pie",
+                        showInLegend: true,
+                        legendText: "",
+                        toolTipContent: "{name}: <strong>{#percent%} (#percent%)</strong>",
+                        indexLabel: "{y} (#percent%)",
+                        percentFormatString: "#0.##",
+                        indexLabelFontColor: "white",
+                        indexLabelPlacement: "inside",
+                        dataPoints: [
+                            { y: {{$userSubscription_daily
+                                -(($userSubscription_daily/100*$headoffice->monthly_percentage)+($userSubscription_daily/100*$headoffice->sale_tax)+($userSubscription_daily/100*$headoffice->registration_tax)+($userSubscription_daily/100*$headoffice->other_expenses))}}, name: "Company" },
+                            { y: {{$userSubscription_daily/100*$headoffice->monthly_percentage}}, name: "Monthly" },
+                            { y: {{$userSubscription_daily/100*$headoffice->sale_tax}}, name: "Sale Tax" },
+                            { y: {{$userSubscription_daily/100*$headoffice->registration_tax}},  name: "Registration Tax" },
+                            { y: {{$userSubscription_daily/100*$headoffice->other_expenses}},  name: "Other Expenses" }
+                        ]
                     }
-                    @endforeach
                 ]
-            }]
-        });
+            });
+        calculatePercentage();
         chart1.render();
 
-        var chart = new CanvasJS.Chart("chartContainer-os", {
-            exportEnabled: true,
-            animationEnabled: true,
-            legend: {
-                cursor: "pointer",
-                horizontalAlign: "right",
-                verticalAlign: "center",
-                fontSize: 16,
-                padding: {
-                    top: 20,
-                    bottom: 2,
-                    right: 20,
+        function calculatePercentage() {
+            var dataPoint = chart1.options.data[0].dataPoints;
+            var total = dataPoint[0].y;
+            for(var i = 0; i < dataPoint.length; i++) {
+                if(i == 0) {
+                    chart1.options.data[0].dataPoints[i].percentage = 100;
+                } else {
+                    chart1.options.data[0].dataPoints[i].percentage = ((dataPoint[i].y / total) * 100).toFixed(2);
+                }
+            }
+        }
+
+
+        var chart2 = new CanvasJS.Chart("chartContainer-os",
+            {
+                exportEnabled: true,
+                animationEnabled: true,
+
+                legend: {
+                    cursor: "pointer",
+                    horizontalAlign: "right",
+                    verticalAlign: "center",
+                    fontSize: 16,
+                    padding: {
+                        top: 20,
+                        bottom: 2,
+                        right: 20,
+                    },
                 },
-            },
-            data: [{
-                type: "pie",
-                showInLegend: true,
-                legendText: "",
-                toolTipContent: "{name}: <strong>{#percent%} (#percent%)</strong>",
-                indexLabel: "#percent%",
-                indexLabelFontColor: "white",
-                indexLabelPlacement: "inside",
-                dataPoints: [
-                    @foreach($browsers as $browser)
+                data: [
                     {
-                        y: {{ $browser->total_count }},
-                        name: "{{$browser->referral}}"
+                        type: "pie",
+                        showInLegend: true,
+                        legendText: "",
+                        toolTipContent: "{name}: <strong>{#percent%} (#percent%)</strong>",
+                        indexLabel: "{y} (#percent%)",
+                        percentFormatString: "#0.##",
+                        indexLabelFontColor: "white",
+                        indexLabelPlacement: "inside",
+                        dataPoints: [
+                            { y: {{$userSubscription_monthly-(($userSubscription_monthly/100*$headoffice->monthly_percentage)+($userSubscription_monthly/100*$headoffice->sale_tax)+($userSubscription_monthly/100*$headoffice->registration_tax)+($userSubscription_monthly/100*$headoffice->other_expenses))}}, name: "Company" },
+                            { y: {{$userSubscription_monthly/100*$headoffice->monthly_percentage}}, name: "Monthly" },
+                            { y: {{$userSubscription_monthly/100*$headoffice->sale_tax}}, name: "Sale Tax" },
+                            { y: {{$userSubscription_monthly/100*$headoffice->registration_tax}},  name: "Registration Tax" },
+                            { y: {{$userSubscription_monthly/100*$headoffice->other_expenses}},  name: "Other Expenses" }
+                        ]
                     }
-                    @endforeach
                 ]
-            }]
-        });
-        chart.render();
+            });
+        calculatePercentage2();
+        chart2.render();
+
+        function calculatePercentage2() {
+            var dataPoint = chart2.options.data[0].dataPoints;
+            var total = dataPoint[0].y;
+            for(var i = 0; i < dataPoint.length; i++) {
+                if(i == 0) {
+                    chart2.options.data[0].dataPoints[i].percentage = 100;
+                } else {
+                    chart2.options.data[0].dataPoints[i].percentage = ((dataPoint[i].y / total) * 100).toFixed(2);
+                }
+            }
+        }
     </script>
     @endsection
