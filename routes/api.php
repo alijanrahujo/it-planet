@@ -120,12 +120,18 @@ Route::get('/get_favourite_products', 'App\Http\Controllers\API\WishlistControll
 Route::post('/add_favourite_product', 'App\Http\Controllers\API\WishlistController@create');
 Route::post('/remove_favourite_product', 'App\Http\Controllers\API\WishlistController@delete');
 
+Route::get('/customer_orders', 'App\Http\Controllers\API\Customer\OrderController@customer_orders');
+
+Route::post('/order_tracking', 'App\Http\Controllers\API\Customer\OrderController@order_tracking');
+
 });
 
 //Customer
 Route::post('/customer_register', 'App\Http\Controllers\API\Auth\CustomerAuthController@register');
 Route::post('/customer_login', 'App\Http\Controllers\API\Auth\CustomerAuthController@customerlogin');
 Route::post('/customer_forgot_password', 'App\Http\Controllers\API\Auth\CustomerAuthController@customer_forgot');
+
+
 
 
 

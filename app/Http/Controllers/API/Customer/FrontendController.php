@@ -156,10 +156,18 @@ class FrontendController extends Controller
             ]);
         }
 
+         $data= array();
+          foreach ($product as $key1 => $products) 
+          {
+            $data[$key1] = $products;
+            $data[$key1]['description'] = str_replace('&nbsp;', ' ', strip_tags($products['description']));
+
+          }
+
         return response()->json([
             'status_code' => 200,
             'status' => 1,
-            'festivels'=>$product,
+            'festivels'=>$data,
 
         ]);
     }
@@ -277,7 +285,7 @@ class FrontendController extends Controller
       foreach ($hot_sale as $key1 => $hot_sales) 
       {
         $data[$key1] = $hot_sales;
-        $data[$key1]['description'] = strip_tags($hot_sales['description']);
+        $data[$key1]['description'] = str_replace('&nbsp;', ' ', strip_tags($hot_sales['description']));
 
       }
 
@@ -293,10 +301,19 @@ class FrontendController extends Controller
     {
       $deals_of_the_day = Product::where('deal_of_the_day','==',1)->get();
 
+      $data= array();
+
+      foreach ($deals_of_the_day as $key1 => $deals) 
+      {
+        $data[$key1] = $deals;
+        $data[$key1]['description'] = str_replace('&nbsp;', ' ', strip_tags($deals['description']));
+
+      }
+
     return response()->json([
       'status_code' => 200,
       'status' => 1,
-      'data' => $deals_of_the_day,
+      'data' => $data,
     ]);
 
     }

@@ -16,6 +16,7 @@ use App\Models\Coupon;
 use App\Models\Vendororder;
 use App\Models\State;
 use App\Models\Country;
+use Auth;
 
 class OrderController extends Controller
 {
@@ -287,4 +288,104 @@ class OrderController extends Controller
             'message' => 'Bad Request',
         ]);
     }
+
+
+
+    public function customer_orders()
+    {
+        $user = Auth::user();
+        $orders_list = Order::all()->where('user_id','=',$user->id);
+        $orders = [];
+        foreach ($orders_list as $order){
+          $tmp_obj = (object)[];
+          $tmp_obj->order_number = $order['order_number'];
+          $tmp_obj->method = $order['method'];
+          $tmp_obj->order_note = $order['order_note'];
+          $tmp_obj->shipping_cost = $order['shipping_cost'];
+          $tmp_obj->shipping = $order['shipping'];
+          $tmp_obj->coupon_discount = $order['coupon_discount'];
+          $tmp_obj->coupon_code = $order['coupon_code'];
+          $tmp_obj->total_items = $order['totalQty'];
+          $tmp_obj->pay_amount = $order['pay_amount'];
+          $tmp_obj->status = $order['status'];
+
+          $cart_list = unserialize(gzuncompress(utf8_decode($order->cart)));
+          $tempList1 = [];
+          $tempList = [];
+          foreach ($cart_list as $key => $obj){
+            if($key == 'items'){
+              foreach ($obj as $item) {
+                $p = Product::all()->where('id','=',$item['item']['id'])->first();
+                $p['selected_qty'] = $item['qty'];
+                $tmp_obj->cart[] = $p;
+              }
+            }
+          }
+          
+          array_push($orders, $tmp_obj);
+        }
+
+        return response()->json([
+          'status_code' => 200,
+          'status' => 1,
+          'data' => $orders,
+        ]);
+
+    }
+
+
+    public function order_tracking(Request $request)
+    {
+        if($request->order_number){
+            $user = Auth::user();
+            $orders_list = Order::where('user_id','=',$user->id)
+            ->where('order_number','=',$request->order_number)->get();
+
+            $orders = [];
+            foreach ($orders_list as $order){
+              $tmp_obj = (object)[];
+              $tmp_obj->order_number = $order['order_number'];
+              $tmp_obj->method = $order['method'];
+              $tmp_obj->order_note = $order['order_note'];
+              $tmp_obj->shipping_cost = $order['shipping_cost'];
+              $tmp_obj->shipping = $order['shipping'];
+              $tmp_obj->coupon_discount = $order['coupon_discount'];
+              $tmp_obj->coupon_code = $order['coupon_code'];
+              $tmp_obj->total_items = $order['totalQty'];
+              $tmp_obj->pay_amount = $order['pay_amount'];
+              $tmp_obj->status = $order['status'];
+
+              $cart_list = unserialize(gzuncompress(utf8_decode($order->cart)));
+              $tempList1 = [];
+              $tempList = [];
+              foreach ($cart_list as $key => $obj){
+                if($key == 'items'){
+                  foreach ($obj as $item) {
+                    $p = Product::all()->where('id','=',$item['item']['id'])->first();
+                    $p['selected_qty'] = $item['qty'];
+                    $tmp_obj->cart[] = $p;
+                  }
+                }
+              }
+              
+              array_push($orders, $tmp_obj);
+            }
+
+            return response()->json([
+              'status_code' => 200,
+              'status' => 1,
+              'data' => $orders,
+            ]);
+
+    }else{
+        return response()->json([
+          'status_code' => 200,
+          'status' => 1,
+          'message' => 'parameter missing',
+        ]);
+
+    }
+
+    }
+
 }
