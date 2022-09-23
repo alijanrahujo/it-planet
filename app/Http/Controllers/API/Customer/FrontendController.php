@@ -270,13 +270,13 @@ class FrontendController extends Controller
 
   public function hot_sale()
     {
-        $hot_sale = Product::where('hot','==',1)->get();
+      $hot_sale = Product::where('hot','==',1)->get();
 
-    return response()->json([
-      'status_code' => 200,
-      'status' => 1,
-      'data' => $hot_sale,
-    ]);
+      return response()->json([
+        'status_code' => 200,
+        'status' => 1,
+        'data' => strip_tags($hot_sale),
+      ]);
 
   }
 
