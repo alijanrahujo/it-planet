@@ -50,10 +50,10 @@
                                                             <td>{{$query->created_at->format('Y-m-d')}}</td>
                                                             <td>{{$query->shop_name}}</td>
                                                             <td>{{$query->price}}</td>
-                                                            <td>{{$query->registration_tax.'%'}}</td>
-                                                            <td>{{$query->sale_tax.'%'}}</td>
-                                                            <td>{{$query->other_expenses.'%'}}</td>
-                                                            <td>{{100-($query->registration_tax+$query->sale_tax+$query->other_expenses).'%'}}</td>
+                                                            <td>{{$query->registration_tax. '%' . '('.$query->price/100*$query->registration_tax.')'}}</td>
+                                                            <td>{{$query->sale_tax.'%' . '('.$query->price/100*$query->sale_tax.')'}}</td>
+                                                            <td>{{$query->other_expenses.'%' . '('.$query->price/100*$query->other_expenses.')'}}</td>
+                                                            <td>{{$cp= 100-($query->registration_tax+$query->sale_tax+$query->other_expenses)}}{{'%'}}{{'('.$query->price/100*$cp.')'}}</td>
                                                         
                                                         
     
