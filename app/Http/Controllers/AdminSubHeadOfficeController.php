@@ -589,4 +589,22 @@ class AdminSubHeadOfficeController extends Controller
         $users = User::whereIn('frenchise_id',$franchise)->orderBy('id','desc')->get();
         return view('admin.subheadoffice.vendor.index',compact('users')); 
     }
+
+    public function subheadoffice_chartdetail($head_id)
+    {
+        $headoffice = Head::where('id',$head_id)->first();
+        
+        $frenchises = Frenchise::all()->where('sub_head_office_id','=',$headoffice->id)->pluck('id');
+        $vendors = User::whereIn('frenchise_id', $frenchises)->get()->pluck('id');
+
+        $query  = Head::leftjoin('frenchises','heads.id','=','frenchises.sub_head_office_id')
+        ->leftjoin('users','frenchises.id','=','users.frenchise_id')
+        ->leftjoin('user_subscriptions','users.id','=','user_subscriptions.user_id')
+        ->where('frenchise_id',$fid)
+        ->whereMonth('user_subscriptions.created_at',Carbon::now()->month)
+        ->orderBy('user_subscriptions.id','desc')
+        ->get(['users.shop_name','user_subscriptions.created_at','user_subscriptions.price','frenchises.frenchise_name','frenchises.registration_tax','frenchises.sale_tax','other_expenses','monthly_percentage']);
+
+    }
+
 }

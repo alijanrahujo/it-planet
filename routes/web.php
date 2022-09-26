@@ -434,7 +434,12 @@ Route::prefix('admin')->group(function () {
 
     Route::get('/{id}/vendor_chartdetail', 'App\Http\Controllers\AdminVendorController@vendor_chartdetail')->name('admin-vendor-chartdetail');      
 
-       Route::get('/{id}/chart_detail', 'App\Http\Controllers\AdminController@chart_detail')->name('admin-chart-detail');
+    Route::get('/{id}/chart_detail', 'App\Http\Controllers\AdminController@chart_detail')->name('admin-chart-detail');
+
+    Route::get('/{id}/subheadoffice_chartdetail', 'App\Http\Controllers\AdminSubHeadOfficeController@subheadoffice_chartdetail')->name('admin-subheadoffice-chart_detail');
+
+
+
     });
 
     // add country and city

@@ -128,7 +128,7 @@
                                     <div class="panel-heading">Monthly Chart</div>
                                     <div class="panel-body">
                                         <div id="chartContainer-os"></div>
-                                        <a href="">view details</a>
+                                        <a href="{{route('admin-subheadoffice-chart_detail',$user->id)}}">view details</a>
                                     </div>
                                 </div>
                             </div>
