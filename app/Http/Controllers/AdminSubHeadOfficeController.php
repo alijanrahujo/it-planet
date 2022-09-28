@@ -111,14 +111,21 @@ class AdminSubHeadOfficeController extends Controller
 
         
 
-        $frenchises = Frenchise::all()->where('sub_head_office_id','=',$user->id)->pluck('id');
-        $vendors = User::whereIn('frenchise_id', $frenchises)->get()->pluck('id');
+        $frenchises = Frenchise::select('id','percentage','monthly_percentage','yearly_percentage','sale_tax','registration_tax','other_expenses')->where('sub_head_office_id','=',$user->id)->get();
+        //$vendors = User::whereIn('frenchise_id', $frenchises)->get()->pluck('id');
         //$order   = Order::whereIn('user_id', $vendors)->get();
 
-        $userSubscription_daily = UserSubscription::whereIn('user_id', $vendors)->whereDate('created_at', '=', date('Y-m-d'))->sum('price');
-        $userSubscription_monthly = UserSubscription::whereIn('user_id', $vendors)->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->sum('price');
-        $userSubscription_yearly = UserSubscription::whereIn('user_id', $vendors)->whereYear('created_at', Carbon::now()->year)->sum('price');
 
+        $userSubscription_daily = $this->chart('daily',$frenchises);
+        $userSubscription_monthly = $this->chart('monthly',$frenchises);
+        $userSubscription_yearly = $this->chart('yearly',$frenchises);
+
+        //$userSubscription_daily = UserSubscription::whereIn('user_id', $vendors)->whereDate('created_at', '=', date('Y-m-d'))->sum('price');
+        //$userSubscription_monthly = UserSubscription::whereIn('user_id', $vendors)->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->sum('price');
+        //$userSubscription_yearly = UserSubscription::whereIn('user_id', $vendors)->whereYear('created_at', Carbon::now()->year)->sum('price');
+
+        $frenchises = Frenchise::all()->where('sub_head_office_id','=',$user->id)->pluck('id');
+        $vendors = User::whereIn('frenchise_id', $frenchises)->get()->pluck('id');
         
         $duration = '+'. $headoffice->duration . ' years';
         $select_date = UserSubscription::whereIn('user_id', $vendors)->first();
@@ -222,6 +229,42 @@ class AdminSubHeadOfficeController extends Controller
                 'yearlychart'
             )
         );
+    }
+
+    public function chart($type,$data)
+    {
+        $response = 0;
+
+        foreach($data as $frenchise)
+        {
+            $total = 0;
+            $vendors = User::where('frenchise_id', $frenchise->id)->get()->pluck('id');
+            foreach($vendors as $id)
+            {
+                if($type == 'daily')
+                {
+                    $total += UserSubscription::where('user_id', $id)->whereDate('created_at', '=', date('Y-m-d'))->sum('price');
+                }
+                else if($type == 'monthly')
+                {
+                    $total += UserSubscription::where('user_id', $id)->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->sum('price');
+                }
+                else if($type == 'yearly')
+                {
+                    $total += UserSubscription::where('user_id', $id)->whereYear('created_at', Carbon::now()->year)->sum('price');
+                }
+            }
+
+            if($type == 'daily' or $type == 'monthly')
+            {
+                $response += $total - (($total/100* (float)$frenchise->monthly_percentage)+($total/100* (float)$frenchise->sale_tax)+($total/100* (float)$frenchise->registration_tax)+($total/100* (float)$frenchise->other_expenses));
+            }
+            else if($type == 'yearly')
+            {
+                $response += $total - (($total/100* (float)$frenchise->monthly_percentage)+($total/100* (float)$frenchise->sale_tax)+($total/100* (float)$frenchise->registration_tax)+($total/100* (float)$frenchise->other_expenses));
+            }
+        }
+        return $response;
     }
 
     public function add_sub_head_office()
