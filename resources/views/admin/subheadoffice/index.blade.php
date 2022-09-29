@@ -148,13 +148,13 @@
                         </div>
                     </div>
 
-                    <div class="panel panel-default admin">
+                    <!-- <div class="panel panel-default admin">
                         <div class="panel-heading admin-title">Total Sales of <?php echo date('Y') ?></div>
                             <div class="panel-body dashboard-body">
                                 <div id="chtAnimatedBarChart" class="bcBar"></div>
                             </div>
                         </div>
-                    <div>
+                    <div> -->
 
                 <!-- Ending of Dashboard Top reference + Most Used OS area -->
                 <!-- Starting of Dashboard header items area -->
@@ -181,12 +181,12 @@
 
     <script language="JavaScript">
 
-    $(function() {
-      //var chart_data = getData();
-      var chart_data = {!! $yearlychart !!};
+    // $(function() {
+    //   //var chart_data = getData();
+    //   var chart_data = '';
 
-      $('#chtAnimatedBarChart').animatedBarChart({ data: chart_data });
-    });
+    //   $('#chtAnimatedBarChart').animatedBarChart({ data: chart_data });
+    // });
 
         displayLineChart();
 

@@ -120,84 +120,96 @@ class AdminSubHeadOfficeController extends Controller
         $userSubscription_monthly = $this->chart('monthly',$frenchises);
         $userSubscription_yearly = $this->chart('yearly',$frenchises);
 
-        //$userSubscription_daily = UserSubscription::whereIn('user_id', $vendors)->whereDate('created_at', '=', date('Y-m-d'))->sum('price');
-        //$userSubscription_monthly = UserSubscription::whereIn('user_id', $vendors)->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->sum('price');
-        //$userSubscription_yearly = UserSubscription::whereIn('user_id', $vendors)->whereYear('created_at', Carbon::now()->year)->sum('price');
 
-        $frenchises = Frenchise::all()->where('sub_head_office_id','=',$user->id)->pluck('id');
-        $vendors = User::whereIn('frenchise_id', $frenchises)->get()->pluck('id');
-        
+        $frenchises1 = Frenchise::all()->where('sub_head_office_id','=',$user->id)->pluck('id');
+        $vendors = User::whereIn('frenchise_id', $frenchises1)->get()->pluck('id');
+
         $duration = '+'. $headoffice->duration . ' years';
         $select_date = UserSubscription::whereIn('user_id', $vendors)->first();
         $start_date = $select_date->created_at->format('Y-m-d');
         $end_date = date('Y-m-d',strtotime($duration.$start_date));
+
+        $userSubscription_contract = $this->chart('contract',$frenchises,$end_date);
         
-        $userSubscription_contract = UserSubscription::whereIn('user_id', $vendors)->where('created_at','<=', $end_date)->sum('price');
+        
+        //$userSubscription_daily = UserSubscription::whereIn('user_id', $vendors)->whereDate('created_at', '=', date('Y-m-d'))->sum('price');
+        //$userSubscription_monthly = UserSubscription::whereIn('user_id', $vendors)->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->sum('price');
+        //$userSubscription_yearly = UserSubscription::whereIn('user_id', $vendors)->whereYear('created_at', Carbon::now()->year)->sum('price');
+
+        //$frenchises = Frenchise::all()->where('sub_head_office_id','=',$user->id)->pluck('id');
+        //$vendors = User::whereIn('frenchise_id', $frenchises)->get()->pluck('id');
+        
+        
+        // $select_date = UserSubscription::whereIn('user_id', $vendors)->first();
+        // $start_date = $select_date->created_at->format('Y-m-d');
+        // $end_date = date('Y-m-d',strtotime($duration.$start_date));
+        
+        // $userSubscription_contract = UserSubscription::whereIn('user_id', $vendors)->where('created_at','<=', $end_date)->sum('price');
         
 
         //Yearly chart month wise
-        $yearlychart = array();
-        $month = date('Y-1-1');
-        $chart_company = array();
-        $chart_monthly = array();
-        $chart_sale_tax = array();
-        $chart_registration_tax = array();
-        $chart_other_expenses = array();
+        // $yearlychart = array();
+        // $month = date('Y-1-1');
+        // $chart_company = array();
+        // $chart_monthly = array();
+        // $chart_sale_tax = array();
+        // $chart_registration_tax = array();
+        // $chart_other_expenses = array();
 
-        for($i=1; $i<=12; $i++)
-        {
-            $array = array();
-            $sales = UserSubscription::whereIn('user_id', $vendors)->whereYear('created_at', '=', date('Y',strtotime($month)))->whereMonth('created_at', '=', date('m',strtotime($month)))->sum('price');
-            //$sales = Order::where('status', '=', 'completed')->whereMonth('created_at', '=', $month)->count();
+        // for($i=1; $i<=12; $i++)
+        // {
+        //     $array = array();
+        //     $sales = UserSubscription::whereIn('user_id', $vendors)->whereYear('created_at', '=', date('Y',strtotime($month)))->whereMonth('created_at', '=', date('m',strtotime($month)))->sum('price');
+        //     //$sales = Order::where('status', '=', 'completed')->whereMonth('created_at', '=', $month)->count();
 
-            $chart_monthly_data = $sales/100*$headoffice->monthly_percentage;
-            $chart_sale_tax_data = $sales/100*$headoffice->sale_tax;
-            $chart_registration_tax_data = $sales/100*$headoffice->registration_tax;
-            $chart_other_expenses_data = $sales/100*$headoffice->other_expenses;
-            $chart_company_data = $sales - ($chart_monthly_data+$chart_sale_tax_data+$chart_registration_tax_data+$chart_other_expenses_data);
+        //     $chart_monthly_data = $sales/100*$headoffice->monthly_percentage;
+        //     $chart_sale_tax_data = $sales/100*$headoffice->sale_tax;
+        //     $chart_registration_tax_data = $sales/100*$headoffice->registration_tax;
+        //     $chart_other_expenses_data = $sales/100*$headoffice->other_expenses;
+        //     $chart_company_data = $sales - ($chart_monthly_data+$chart_sale_tax_data+$chart_registration_tax_data+$chart_other_expenses_data);
             
 
-            $chart_company[] = [
-                 "group_name" => "Company",
-                 "name" => date('M',strtotime($month)),
-                 "value" => $chart_company_data
-            ];
+        //     $chart_company[] = [
+        //          "group_name" => "Company",
+        //          "name" => date('M',strtotime($month)),
+        //          "value" => $chart_company_data
+        //     ];
             
-            $chart_monthly[] = [
-                "group_name" => "Monthly",
-                "name" => date('M',strtotime($month)),
-                "value" => $chart_monthly_data
-           ];
+        //     $chart_monthly[] = [
+        //         "group_name" => "Monthly",
+        //         "name" => date('M',strtotime($month)),
+        //         "value" => $chart_monthly_data
+        //    ];
 
-           $chart_sale_tax[] = [
-                "group_name" => "Sale Tax",
-                "name" => date('M',strtotime($month)),
-                "value" => $chart_sale_tax_data
-           ];
+        //    $chart_sale_tax[] = [
+        //         "group_name" => "Sale Tax",
+        //         "name" => date('M',strtotime($month)),
+        //         "value" => $chart_sale_tax_data
+        //    ];
 
-           $chart_registration_tax[] = [
-                "group_name" => "Registration Tax",
-                "name" => date('M',strtotime($month)),
-                "value" => $chart_registration_tax_data
-           ];
+        //    $chart_registration_tax[] = [
+        //         "group_name" => "Registration Tax",
+        //         "name" => date('M',strtotime($month)),
+        //         "value" => $chart_registration_tax_data
+        //    ];
 
-           $chart_other_expenses[] = [
-                "group_name" => "Other Expenses",
-                "name" => date('M',strtotime($month)),
-                "value" => $chart_other_expenses_data
-           ];
+        //    $chart_other_expenses[] = [
+        //         "group_name" => "Other Expenses",
+        //         "name" => date('M',strtotime($month)),
+        //         "value" => $chart_other_expenses_data
+        //    ];
 
-            $month = date('Y-m-d',strtotime("+1 month ". $month));
-        }
+        //     $month = date('Y-m-d',strtotime("+1 month ". $month));
+        // }
 
-        $yearlychart = array_merge(
-            $chart_company,
-            $chart_monthly,
-            $chart_sale_tax,
-            $chart_registration_tax,
-            $chart_other_expenses
-        );
-        $yearlychart = json_encode($yearlychart);
+        // $yearlychart = array_merge(
+        //     $chart_company,
+        //     $chart_monthly,
+        //     $chart_sale_tax,
+        //     $chart_registration_tax,
+        //     $chart_other_expenses
+        // );
+        // $yearlychart = json_encode($yearlychart);
         //End Yearly chart month wise
 
 
@@ -226,12 +238,11 @@ class AdminSubHeadOfficeController extends Controller
                 'userSubscription_yearly',
                 'userSubscription_contract',
                 'headoffice',
-                'yearlychart'
             )
         );
     }
 
-    public function chart($type,$data)
+    public function chart($type,$data,$end_date=false)
     {
         $response = 0;
 
@@ -239,30 +250,39 @@ class AdminSubHeadOfficeController extends Controller
         {
             $total = 0;
             $vendors = User::where('frenchise_id', $frenchise->id)->get()->pluck('id');
-            foreach($vendors as $id)
-            {
-                if($type == 'daily')
+            
+            if($type == 'daily')
                 {
-                    $total += UserSubscription::where('user_id', $id)->whereDate('created_at', '=', date('Y-m-d'))->sum('price');
+                    $total += UserSubscription::whereIn('user_id', $vendors)->whereDate('created_at', '=', date('Y-m-d'))->sum('price');
                 }
                 else if($type == 'monthly')
                 {
-                    $total += UserSubscription::where('user_id', $id)->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->sum('price');
+                    $total += UserSubscription::whereIn('user_id', $vendors)->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->sum('price');
                 }
                 else if($type == 'yearly')
                 {
-                    $total += UserSubscription::where('user_id', $id)->whereYear('created_at', Carbon::now()->year)->sum('price');
+                    $total += UserSubscription::whereIn('user_id', $vendors)->whereYear('created_at', Carbon::now()->year)->sum('price');
                 }
-            }
+                else if($type == 'contract')
+                {
+                    $total += UserSubscription::whereIn('user_id', $vendors)->where('created_at','<=', $end_date)->sum('price');
+                }
+                else if($type == 'yearlychart')
+                {
+                    
+                }
+            
+            
 
             if($type == 'daily' or $type == 'monthly')
             {
                 $response += $total - (($total/100* (float)$frenchise->monthly_percentage)+($total/100* (float)$frenchise->sale_tax)+($total/100* (float)$frenchise->registration_tax)+($total/100* (float)$frenchise->other_expenses));
             }
-            else if($type == 'yearly')
+            else if($type == 'yearly' or $type =='contract')
             {
-                $response += $total - (($total/100* (float)$frenchise->monthly_percentage)+($total/100* (float)$frenchise->sale_tax)+($total/100* (float)$frenchise->registration_tax)+($total/100* (float)$frenchise->other_expenses));
+                $response += $total - (($total/100* (float)$frenchise->yearly_percentage)+($total/100* (float)$frenchise->sale_tax)+($total/100* (float)$frenchise->registration_tax)+($total/100* (float)$frenchise->other_expenses));
             }
+           
         }
         return $response;
     }
