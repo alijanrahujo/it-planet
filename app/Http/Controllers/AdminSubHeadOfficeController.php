@@ -600,10 +600,12 @@ class AdminSubHeadOfficeController extends Controller
         $query  = Head::leftjoin('frenchises','heads.id','=','frenchises.sub_head_office_id')
         ->leftjoin('users','frenchises.id','=','users.frenchise_id')
         ->leftjoin('user_subscriptions','users.id','=','user_subscriptions.user_id')
-        ->where('frenchise_id',$fid)
+        ->where('sub_head_office_id',$head_id)
         ->whereMonth('user_subscriptions.created_at',Carbon::now()->month)
         ->orderBy('user_subscriptions.id','desc')
-        ->get(['users.shop_name','user_subscriptions.created_at','user_subscriptions.price','frenchises.frenchise_name','frenchises.registration_tax','frenchises.sale_tax','other_expenses','monthly_percentage']);
+        ->get(['users.shop_name','user_subscriptions.created_at','user_subscriptions.price','frenchises.frenchise_name','frenchises.registration_tax','frenchises.sale_tax','frenchises.other_expenses','frenchises.monthly_percentage','frenchises.yearly_percentage','frenchises.percentage']);
+
+        return view('admin.subheadoffice.chart_details',compact('query'));
 
     }
 
